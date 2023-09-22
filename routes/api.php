@@ -18,4 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::get("/test",function(){
     // echo generateAccountNumber();
 });
+
 Route::post("register",[RegisterController::class,"register"])->name("register");
+Route::post("verify-account",[RegisterController::class,"verify_account"])->name("verify_account");

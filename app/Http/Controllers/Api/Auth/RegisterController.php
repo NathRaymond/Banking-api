@@ -54,4 +54,39 @@ class RegisterController extends Controller
             }
         }
     }
+
+    public function verify_account(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "code" => "required",
+            "user_id" => "required",
+        ]);
+
+        if ($validator->fails()) {
+            return API_Response(500, [
+                "message" => $validator->messages()->first()
+            ], $validator->errors());
+        } else {
+            $user = User::find($request->user_id);
+            if ($user) {
+                if ($user->verification_code == $request->code) {
+                    $user->verified = 1;
+                    $user->verification_code = null;
+                    $user->save();
+                    return API_Response(200, [
+                        "message" => "Verification Success",
+                        "redirect" => "dashboard"
+                    ]);
+                } else {
+                    return API_Response(500, [
+                        "message" => "Incorrect code"
+                    ]);
+                }
+            } else {
+                return API_Response(500, [
+                    "message" => "Something went wrong. please try again"
+                ]);
+            }
+        }
+    }
 }
