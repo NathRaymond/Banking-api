@@ -9,15 +9,19 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
 
-    public function show($id)
-    {
-        $user = User::find($id);
 
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        return response()->json(['user' => $user], 200);
+    public function index(Request $request){
+        return  $user = $request->user();
     }
+    // public function show($id)
+    // {
+    //     $user = User::find($id);
+
+    //     if (!$user) {
+    //         return response()->json(['error' => 'User not found'], 404);
+    //     }
+
+    //     return response()->json(['user' => $user], 200);
+    // }
 
 }

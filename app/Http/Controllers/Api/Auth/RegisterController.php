@@ -94,4 +94,29 @@ class RegisterController extends Controller
             }
         }
     }
+
+    public function resend_verification_code(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "user_id" => "required",
+        ]);
+
+        if ($validator->fails()) {
+            return API_Response(500, [
+                "message" => $validator->messages()->first()
+            ], $validator->errors());
+        } else {
+            $user = User::find($request->user_id);
+            if ($user) {
+                Mail::to($user->email)->send(new VerifyAccountMail($user));
+                return API_Response(200, [
+                    "message" => "Successfully resend code",
+                ]);
+            } else {
+                return API_Response(500, [
+                    "message" => "Something went wrong. please try again"
+                ]);
+            }
+        }
+    }
 }
