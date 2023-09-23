@@ -30,22 +30,28 @@ Route::post('login', [LoginController::class, 'login'])->name("login");
 Route::post('password/reset', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name("password-reset");
 Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name("password.reset");
 
-#TODO REGISTRATION
-Route::post("register",[RegisterController::class,"register"])->name("register");
-#TODO ACCOUNT VERIFICATION
-Route::post("verify-account",[RegisterController::class,"verify_account"])->name("verify_account");
 
-Route::middleware('auth:api')->group(function () {
-    
+#TODO GUEST
+Route::group(function () {
+    #TODO REGISTRATION
+    Route::post("register", [RegisterController::class, "register"])->name("register");
+    #TODO ACCOUNT VERIFICATION
+    Route::post("verify-account", [RegisterController::class, "verify_account"])->name("verify_account");
 });
 
+
+#TODO AUTHORIZE
+Route::middleware('auth:api')->group(function () {
+});
+
+
 // Create Pin
-Route::post("create-transaction-pin",[TransactionPinController::class,"create"]);
+Route::post("create-transaction-pin", [TransactionPinController::class, "create"]);
 // Reset Transaction Pin
-Route::post("reset-transaction-pin",[TransactionPinController::class,"reset"]);
+Route::post("reset-transaction-pin", [TransactionPinController::class, "reset"]);
 
 // Fetch user information
-Route::get("user",[UserController::class,"index"]);
+Route::get("user", [UserController::class, "index"]);
 
 // Transfer Money
-Route::post("money-transfer",[MoneyTransferController::class,"transfer"]);
+Route::post("money-transfer", [MoneyTransferController::class, "transfer"]);
