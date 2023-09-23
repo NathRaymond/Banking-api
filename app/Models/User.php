@@ -60,4 +60,16 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->save();
     }
 
+    public function generatePasswordResentCode()
+    {
+        $randomNumber = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT); // Generate a random four-digit number
+
+        $this->password_reset_code = $randomNumber;
+        $this->password_reset_expires_at = now()->addMinutes(10);
+        $this->save();
+
+        return $randomNumber; // Return the generated code
+    }
+
+
 }

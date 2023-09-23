@@ -40,6 +40,8 @@ Route::name("guest")->group(function () {
     #TODO FORGET PASSWORD
     Route::post("password/email", [ForgotPasswordController::class, "sendResetCodeEmail"]);
     Route::post("reset-password", [ForgotPasswordController::class, "submitResetCode"]);
+    Route::post("password/resend-code", [ForgotPasswordController::class, "resendResetCode"])->name('password.resend-code');
+
 
     // Route::post("password/reset", [ForgotPasswordController::class, "resetPassword"]);
     // Route::post('password/resend', [ForgotPasswordController::class, 'sendResetLinkEmail']);
@@ -50,7 +52,7 @@ Route::name("guest")->group(function () {
 #TODO AUTHORIZE
 Route::middleware('auth:api')->group(function () {
     #TODO GET AUTH USER
-    Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");   
+    Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
 });
 
 

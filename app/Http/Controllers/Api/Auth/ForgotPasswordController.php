@@ -16,39 +16,39 @@ class ForgotPasswordController extends Controller
 {
 
     public function sendResetCodeEmail(Request $request)
-        {
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-            ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => $validator->messages()->first(),
-                ], 500);
-            }
-
-            $user = User::where('email', $request->email)->first();
-
-            if (!$user) {
-                return response()->json([
-                    'message' => 'Email not found'
-                ], 500);
-            }
-
-            $user->generatePasswordResetCode();
-
-            try {
-                Mail::to($user->email)->send(new PasswordResetMail($user->password_reset_code));
-            } catch (\Exception $e) {
-                return response()->json([
-                    'message' => 'Failed to send the email. Please try again later.'
-                ], 500);
-            }
-
+        if ($validator->fails()) {
             return response()->json([
-                'message' => 'Reset code sent to your email'
-            ], 200);
+                'message' => $validator->messages()->first(),
+            ], 500);
         }
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Email not found'
+            ], 500);
+        }
+
+        $user->generatePasswordResetCode();
+
+        try {
+            Mail::to($user->email)->send(new PasswordResetMail($user->password_reset_code));
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to send the email. Please try again later.'
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Reset code sent to your email'
+        ], 200);
+    }
 
     public function submitResetCode(Request $request)
     {
@@ -96,33 +96,39 @@ class ForgotPasswordController extends Controller
         ], 200);
     }
 
+    public function resendResetCode(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+    ]);
 
-    public function sendResetLinkEmail(Request $request)
-    {
-        $this->validate($request, ['email' => 'required|email']);
-
-        $response = $this->broker()->sendResetLink(
-            $request->only('email')
-        );
-
-        if ($response == Password::RESET_LINK_SENT) {
-            return API_Response(200, ['message' => 'We have emailed your password reset code!']);
-        } else {
-            return API_Response(500, ['message' => trans($response)]);
-        }
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 500,
+            'data' => [
+                'message' => $validator->messages()->first(),
+            ],
+        ]);
     }
 
+    $user = User::where('email', $request->email)->first();
 
-    protected function sendResetLinkResponse($response)
-    {
-        return API_Response(200, ['message' => 'We have emailed your password reset code!']);
+    if (!$user) {
+        return response()->json([
+            'status' => 404,
+            'data' => ['message' => 'Email not found'],
+        ]);
     }
 
+    $code = $user->generatePasswordResentCode();
 
-    protected function sendResetLinkFailedResponse(Request $request, $response)
-    {
-        return API_Response(500, ['message' => trans($response)]);
-    }
+    Mail::to($user->email)->send(new PasswordResetMail($code));
+
+    return response()->json([
+        'status' => 200,
+        'data' => ['message' => 'Reset code sent to your email'],
+    ]);
+}
 
 
 }
