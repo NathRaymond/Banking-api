@@ -9,7 +9,7 @@ use App\Http\Controllers\Api\Auth\MoneyTransferController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use KingFlamez\Rave\Facades\Rave as Flutterwave;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,11 +19,11 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "api" middleware group. Make something great!
 |
+*/
 
 Route::get("/test",function(){
-    // echo generateAccountNumber();
+   return Flutterwave::generateReference();
 });
-*/
 
 Route::post('password/reset', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name("password-reset");
 Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name("password.reset");
