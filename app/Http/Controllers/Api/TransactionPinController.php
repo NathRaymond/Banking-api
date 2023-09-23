@@ -41,37 +41,6 @@ class TransactionPinController extends Controller
         return response()->json(['message' => 'Transaction PIN reset successfully'], 200);
     }
 
-    // public function create(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'transaction_pin' => 'required|min:4',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json(['errors' => $validator->errors()], 422);
-    //     }
-
-    //     $user = Auth::user();
-
-    //     if (!$user) {
-    //         return response()->json(['error' => 'User not found'], 404);
-    //     }
-
-    //     // Check if the user already has a transaction PIN
-    //     $existingTransactionPin = TransactionPin::where('user_id', $user->id)->first();
-
-    //     if ($existingTransactionPin) {
-    //         return response()->json(['error' => 'Transaction PIN already exists'], 400);
-    //     }
-
-    //     // Create a new transaction PIN record
-    //     $newTransactionPin = new TransactionPin();
-    //     $newTransactionPin->user_id = $user->id;
-    //     $newTransactionPin->transaction_pin = Hash::make($request->input('transaction_pin'));
-    //     $newTransactionPin->save();
-
-    //     return response()->json(['message' => 'Transaction PIN created successfully'], 201);
-    // }
 
     public function create(Request $request)
     {
@@ -83,7 +52,7 @@ class TransactionPinController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user = auth('api')->user(); // Updated line
+        $user = auth('api')->user();
 
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
