@@ -8,17 +8,19 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index($id)
+    public function fetchAuthUser(Request $request)
     {
-        $user = User::find($id);
+        $user = $request->user();
 
         if (!$user) {
-            return API_Response(500, ['error' => 'User not found']);
+            return API_Response(200, [
+                "message" => $user
+            ]);
+        }else{
+            return API_Response(500, [
+                'message' => 'User unauthorize'
+            ]);
         }
 
-        return API_Response(200, ['user' => $user]);
     }
-
-
-
 }

@@ -24,15 +24,15 @@ Route::get("/test",function(){
     // echo generateAccountNumber();
 });
 */
-
-// Login
-Route::post('login', [LoginController::class, 'login'])->name("login");
 Route::post('password/reset', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name("password-reset");
 Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name("password.reset");
 
 
 #TODO GUEST
 Route::name("guest")->group(function () {
+
+    #TODO LOGIN
+    Route::get('login', [LoginController::class, 'login'])->name("login");
     #TODO REGISTRATION
     Route::post("register", [RegisterController::class, "register"])->name("register");
     #TODO ACCOUNT VERIFICATION
@@ -41,11 +41,10 @@ Route::name("guest")->group(function () {
     Route::post("resend-verification-code", [RegisterController::class, "resend_verification_code"])->name("resend_verification_code");
 });
 
-Route::get("fetch-user/{id}", [UserController::class, "show"])->name("getAuthUser");
-
 #TODO AUTHORIZE
 Route::middleware('auth:api')->group(function () {
-    #TODO GET USER
+    #TODO GET AUTH USER
+    Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
 });
 
 
