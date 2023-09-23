@@ -39,13 +39,10 @@ Route::name("guest")->group(function () {
     Route::post("resend-verification-code", [RegisterController::class, "resend_verification_code"])->name("resend_verification_code");
     #TODO FORGET PASSWORD
     Route::post("password/email", [ForgotPasswordController::class, "sendResetCodeEmail"]);
+    #TODO RESET PASSWORD
     Route::post("reset-password", [ForgotPasswordController::class, "submitResetCode"]);
+    #TODO RESEND CODE
     Route::post("password/resend-code", [ForgotPasswordController::class, "resendResetCode"])->name('password.resend-code');
-
-
-    // Route::post("password/reset", [ForgotPasswordController::class, "resetPassword"]);
-    // Route::post('password/resend', [ForgotPasswordController::class, 'sendResetLinkEmail']);
-
 
 });
 
