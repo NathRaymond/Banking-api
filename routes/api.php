@@ -45,7 +45,7 @@ Route::name("guest")->group(function () {
 #TODO AUTHORIZE
 Route::middleware('auth:api')->group(function () {
     #TODO GET AUTH USER
-    Route::get("fetch-auth-user", [UserController::class, "index"])->name("getAuthUser");
+    Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
 });
 
 
@@ -57,4 +57,5 @@ Route::post("reset-transaction-pin", [TransactionPinController::class, "reset"])
 // Fetch user information
 
 // Transfer Money
-Route::post("money-transfer", [MoneyTransferController::class, "transfer"]);
+Route::post("money-transfer",[MoneyTransferController::class,"transfer"]);
+
