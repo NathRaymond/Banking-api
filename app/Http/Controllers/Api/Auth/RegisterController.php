@@ -19,6 +19,7 @@ class RegisterController extends Controller
             "first_name" => "required|alpha",
             "last_name" => "required|alpha",
             "email" => "required|email",
+            "phone" => "required|numeric",
             "password" => "required|min:8",
             "confirm_password" => "required|same:password",
         ]);
@@ -32,6 +33,8 @@ class RegisterController extends Controller
             $user->first_name = ucfirst($request->first_name);
             $user->last_name = ucfirst($request->last_name);
             $user->email = ($request->email);
+            $user->phone = ($request->phone);
+            $user->verification_code = rand(10000, 99999);
             $user->account_no = generateAccountNumber();
             $user->email = ($request->email);
             $user->password = Hash::make($request->password);
@@ -73,9 +76,11 @@ class RegisterController extends Controller
                     $user->verified = 1;
                     $user->verification_code = null;
                     $user->save();
+                    $auth_token = $user->createToken("MyApp")->accessToken;
                     return API_Response(200, [
                         "message" => "Verification Success",
-                        "redirect" => "dashboard"
+                        "redirect" => "dashboard",
+                        "token" => $auth_token
                     ]);
                 } else {
                     return API_Response(500, [
