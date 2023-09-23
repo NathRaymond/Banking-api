@@ -14,10 +14,10 @@ class UserController extends Controller
         $user = User::find($id);
 
         if (!$user) {
-            return $this->API_Response(500, ['error' => 'User not found']);
+            return API_Response(500, ['error' => 'User not found']);
         }
 
-        return $this->API_Response(200, ['user' => $user]);
+        return API_Response(200, ['user' => $user]);
     }
 
     protected function API_Response($status, $data)
