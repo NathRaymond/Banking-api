@@ -45,7 +45,7 @@ Route::name("guest")->group(function () {
 #TODO AUTHORIZE
 Route::middleware('auth:api')->group(function () {
     #TODO GET AUTH USER
-    Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
+    Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");   
 });
 
 
