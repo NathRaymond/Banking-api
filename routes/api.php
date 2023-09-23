@@ -1,15 +1,16 @@
 <?php
 
-use App\Http\Controllers\Api\Auth\RegisterController;
-use App\Http\Controllers\Api\Auth\LoginController;
-use App\Http\Controllers\Api\Auth\ForgotPasswordController;
-use App\Http\Controllers\Api\Auth\ResetPasswordController;
-use App\Http\Controllers\Api\Auth\TransactionPinController;
-use App\Http\Controllers\Api\Auth\MoneyTransferController;
-use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\BankController;
+use App\Http\Controllers\Api\UserController;
 use KingFlamez\Rave\Facades\Rave as Flutterwave;
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\MoneyTransferController;
+use App\Http\Controllers\Api\Auth\ResetPasswordController;
+use App\Http\Controllers\Api\Auth\ForgotPasswordController;
+use App\Http\Controllers\Api\Auth\TransactionPinController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,16 +22,18 @@ use KingFlamez\Rave\Facades\Rave as Flutterwave;
 |
 */
 
-Route::get("/test",function(){
-   return Flutterwave::generateReference();
+Route::get("/test", function () {
+    return Flutterwave::generateReference();
 });
 
 
+#TODO GET LIST OF BANKS IN NIGERIA
+Route::get("/list-of-banks", [BankController::class, "fetchAllBank"])->name('list-of-banks');;
 
 #TODO GUEST
 Route::name("guest")->group(function () {
     #TODO LOGIN
-    Route::get('login', [LoginController::class, 'login'])->name("login");
+    Route::post('login', [LoginController::class, 'login'])->name("login");
     #TODO REGISTRATION
     Route::post("register", [RegisterController::class, "register"])->name("register");
     #TODO ACCOUNT VERIFICATION
@@ -43,13 +46,16 @@ Route::name("guest")->group(function () {
     Route::post("reset-password", [ForgotPasswordController::class, "submitResetCode"]);
     #TODO RESEND CODE
     Route::post("password/resend-code", [ForgotPasswordController::class, "resendResetCode"])->name('password.resend-code');
-
 });
+
+
 
 #TODO AUTHORIZE
 Route::middleware('auth:api')->group(function () {
     #TODO GET AUTH USER
     Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
+    #TODO TRANSFER
+    Route::post("/verify-bank-account", [MoneyTransferController::class, "verify_account"])->name("verify_account");
 });
 
 
@@ -61,4 +67,3 @@ Route::post("reset-transaction-pin", [TransactionPinController::class, "reset"])
 // Fetch user information
 
 // Transfer Money
-Route::post("money-transfer", [MoneyTransferController::class, "transfer"]);

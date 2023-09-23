@@ -1,68 +1,44 @@
 <?php
 
-namespace App\Http\Controllers\Api\Auth;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Wallet;
-use App\Models\Bank;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+// use KingFlamez\Rave\Facades\Rave as Flutterwave;
+
 
 class MoneyTransferController extends Controller
 {
-        public function transfer(Request $request)
+    public function verify_account(Request $request)
     {
-        $user = $request->user();
-
-        $rules = [
-            'account_number' => 'required',
-            'amount' => 'required|numeric|min:0',
-            'note' => 'nullable',
-        ];
-
-        $messages = [
-            'amount.min' => 'The amount must be at least 0.',
-        ];
-
-        $validator = Validator::make($request->all(), $rules, $messages);
+        $validator = Validator::make($request->all(), [
+            "account_number" => "required|min:10|max:10",
+            "bank_code" => "required",
+        ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return API_Response(500, [
+                "message" => $validator->messages()->first()
+            ], $validator->errors());
+        } else {
+            try {
+                $client = new Client();
+                $response = $client->get('https://api.paystack.co/bank/resolve?account_number=' . $request->account_number . '&bank_code=' . $request->bank_code, [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . config('paystack.secretKey'),
+                    ]
+                ]);
+                return API_Response(
+                    200,
+                    json_decode($response->getBody())
+                );
+            } catch (\Exception $e) {
+                return API_Response(500, [
+                    "message" => "Could not resolve account name. Check parameters or try again"
+                ]);
+            }
         }
-
-        $recipientAccountNumber = $request->input('account_number');
-        $amount = $request->input('amount');
-        $note = $request->input('note');
-
-        // Check if the user has enough balance in their wallet
-        $userWallet = Wallet::where('user_id', $user->id)->first();
-
-        if (!$userWallet || $userWallet->balance < $amount) {
-            return response()->json(['error' => 'Insufficient balance'], 400);
-        }
-
-        // Verify the recipient's bank and account number
-        $recipient = User::where('account_number', $recipientAccountNumber)->first();
-
-        if (!$recipient) {
-            return response()->json(['error' => 'Recipient not found'], 404);
-        }
-
-        $recipientBank = Bank::where('account_number', $recipientAccountNumber)->first();
-
-        if (!$recipientBank || $recipientBank->bank_name !== 'Expected Bank Name') {
-            return response()->json(['error' => 'Recipient bank not verified'], 400);
-        }
-
-        // Deduct money from the sender's wallet
-        $userWallet->decrement('balance', $amount);
-
-        // Update the recipient's wallet
-        $recipientWallet = Wallet::where('user_id', $recipient->id)->first();
-        $recipientWallet->increment('balance', $amount);
-
-        return response()->json(['message' => 'Money transfer successful']);
     }
-
 }
