@@ -9,7 +9,7 @@ use App\Http\Controllers\Api\Auth\MoneyTransferController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use KingFlamez\Rave\Facades\Rave as Flutterwave;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,11 +19,11 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "api" middleware group. Make something great!
 |
+*/
 
 Route::get("/test",function(){
-    // echo generateAccountNumber();
+   return Flutterwave::generateReference();
 });
-*/
 
 
 
@@ -50,7 +50,7 @@ Route::name("guest")->group(function () {
 #TODO AUTHORIZE
 Route::middleware('auth:api')->group(function () {
     #TODO GET AUTH USER
-    Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
+    Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");   
 });
 
 
