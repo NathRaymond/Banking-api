@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function show($id)
+    public function index($id)
     {
         $user = User::find($id);
 
@@ -20,20 +20,5 @@ class UserController extends Controller
     }
 
 
-    //     if (!$user) {
-    //         return API_Response(500, ['error' => 'User not found']);
-    //     }
-
-    //     return API_Response(200, ['user' => $user]);
-    // public function show($id)
-    // {
-    //     $user = User::find($id);
-
-    //     if (!$user) {
-    //         return response()->json(['error' => 'User not found'], 404);
-    //     }
-
-    //     return response()->json(['user' => $user], 200);
-    // }
 
 }

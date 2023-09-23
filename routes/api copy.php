@@ -41,7 +41,7 @@ Route::name("guest")->group(function () {
     Route::post("resend-verification-code", [RegisterController::class, "resend_verification_code"])->name("resend_verification_code");
 });
 
-Route::get("fetch-user/{id}", [UserController::class, "show"])->name("getAuthUser");
+Route::get("fetch-user/{id}", [UserController::class, "index"])->name("getAuthUser");
 
 #TODO AUTHORIZE
 Route::middleware('auth:api')->group(function () {
