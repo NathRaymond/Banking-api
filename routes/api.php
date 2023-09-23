@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\TransactionPinController;
-use App\Http\Controllers\Api\Auth\UserController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\MoneyTransferController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +40,8 @@ Route::post("create-transaction-pin",[TransactionPinController::class,"create"])
 Route::post("reset-transaction-pin",[TransactionPinController::class,"reset"]);
 
 // Fetch user information
-Route::get("user",[UserController::class,"index"]);
+Route::get("user/{id}",[UserController::class,"show"]);
+
 
 // Transfer Money
 Route::post("money-transfer",[MoneyTransferController::class,"transfer"]);
