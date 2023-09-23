@@ -20,10 +20,4 @@ class UserController extends Controller
         return API_Response(200, ['user' => $user]);
     }
 
-    protected function API_Response($status, $data)
-    {
-        return response()->json(['status' => $status, 'data' => $data]);
-    }
-
-
 }
