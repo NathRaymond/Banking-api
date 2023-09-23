@@ -45,3 +45,4 @@ Route::get("user/{id}",[UserController::class,"show"]);
 
 // Transfer Money
 Route::post("money-transfer",[MoneyTransferController::class,"transfer"]);
+
