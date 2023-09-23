@@ -11,7 +11,7 @@ class UserController extends Controller
 
 
     public function index(Request $request){
-        return  $user = $request->user();
+        return  $request->user();
     }
     // public function show($id)
     // {
