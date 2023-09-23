@@ -12,11 +12,11 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        if (!$user) {
+        if ($user) {
             return API_Response(200, [
                 "message" => $user
             ]);
-        }else{
+        } else {
             return API_Response(500, [
                 'message' => 'User unauthorize'
             ]);

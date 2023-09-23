@@ -2,43 +2,55 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use App\Mail\VerifyAccountMail;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
-        public function login(Request $request)
-        {
-            $validator = Validator::make($request->all(), [
-                'login' => 'required',
-                'password' => 'required',
-            ]);
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-            if ($validator->fails()) {
-                return API_Response(500, [], $validator->errors());
-            }
-
-            $credentials = [
-                'password' => $request->input('password'),
-            ];
-
-            $loginField = filter_var($request->input('login'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone_number';
-            $credentials[$loginField] = $request->input('login');
-
-            if (Auth::attempt($credentials)) {
-                $user = Auth::user();
-
-                if ($user->verified == 1) {
-                    return API_Response(200, ['message' => 'Login successful']);
+        if ($validator->fails()) {
+            return API_Response(500, [
+                "message" => $validator->messages()->first()
+            ], $validator->errors());
+        } else {
+            $user = User::where("email", $request->email)->first();
+            if ($user) {
+                if (Hash::verify($user->password, $request->password)) {
+                    if ($user->verified != 1) {
+                        $user->verification_code = rand(10000, 99999);
+                        $user->save();
+                        Mail::to($request->email)->send(new VerifyAccountMail($user));
+                        return API_Response(200, [
+                            'message' =>  "Successfully login! please verify your account",
+                            'redirect' => "verify_account"
+                        ]);
+                    } else {
+                        $auth_token = $user->createToken("MyApp")->accessToken;
+                        return API_Response(200, [
+                            'message' => 'Login successful',
+                            'redirect' => 'dashboard',
+                            "token" => $auth_token
+                        ]);
+                    }
                 } else {
-                    Auth::logout();
-                    return API_Response(500, ['message' => 'User has not been verified']);
+                    return API_Response(500, ['message' => 'Invalid email or password']);
                 }
             } else {
-                return API_Response(500, ['message' => 'Invalid credentials']);
+                return API_Response(500, ['message' => 'Invalid email or password']);
             }
         }
     }
+}

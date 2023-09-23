@@ -24,13 +24,13 @@ Route::get("/test",function(){
     // echo generateAccountNumber();
 });
 */
+
 Route::post('password/reset', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name("password-reset");
 Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name("password.reset");
 
 
 #TODO GUEST
 Route::name("guest")->group(function () {
-
     #TODO LOGIN
     Route::get('login', [LoginController::class, 'login'])->name("login");
     #TODO REGISTRATION
@@ -56,5 +56,4 @@ Route::post("reset-transaction-pin", [TransactionPinController::class, "reset"])
 // Fetch user information
 
 // Transfer Money
-Route::post("money-transfer",[MoneyTransferController::class,"transfer"]);
-
+Route::post("money-transfer", [MoneyTransferController::class, "transfer"]);
