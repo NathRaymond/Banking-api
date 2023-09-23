@@ -4,9 +4,9 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\ResetPasswordController;
-use App\Http\Controllers\Api\Auth\TransactionPinController;
+use App\Http\Controllers\Api\TransactionPinController;
 use App\Http\Controllers\Api\Auth\UserController;
-use App\Http\Controllers\Api\Auth\MoneyTransferController;
+use App\Http\Controllers\Api\MoneyTransferController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
