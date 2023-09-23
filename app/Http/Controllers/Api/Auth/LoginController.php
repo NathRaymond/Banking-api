@@ -28,7 +28,7 @@ class LoginController extends Controller
         } else {
             $user = User::where("email", $request->email)->first();
             if ($user) {
-                if (Hash::verify($user->password, $request->password)) {
+                if (Hash::check($user->password, $request->password)) {
                     if ($user->verified != 1) {
                         $user->verification_code = rand(10000, 99999);
                         $user->save();
