@@ -25,8 +25,6 @@ Route::get("/test",function(){
 });
 */
 
-Route::post('password/reset', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name("password-reset");
-Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name("password.reset");
 
 
 #TODO GUEST
@@ -39,6 +37,14 @@ Route::name("guest")->group(function () {
     Route::post("verify-account", [RegisterController::class, "verify_account"])->name("verify_account");
     #TODO RESEND CODE
     Route::post("resend-verification-code", [RegisterController::class, "resend_verification_code"])->name("resend_verification_code");
+    #TODO FORGET PASSWORD
+    Route::post("password/email", [ForgotPasswordController::class, "sendResetCodeEmail"]);
+    Route::post("reset-password", [ForgotPasswordController::class, "submitResetCode"]);
+
+    // Route::post("password/reset", [ForgotPasswordController::class, "resetPassword"]);
+    // Route::post('password/resend', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+
+
 });
 
 #TODO AUTHORIZE
