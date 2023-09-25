@@ -72,8 +72,12 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function transactionPin()
-{
-    return $this->hasOne(TransactionPin::class);
-}
+    {
+        return $this->hasOne(TransactionPin::class);
+    }
+    public function beneficiaries()
+    {
+        return $this->hasMany(Beneficiary::class);
+    }
 
 }

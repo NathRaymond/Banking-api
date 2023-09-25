@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\AirtimeController;
 use App\Http\Controllers\Api\DataRechargeController;
 use App\Http\Controllers\Api\ElectricityRechargeController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\BeneficiaryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -73,5 +74,14 @@ Route::middleware('auth:api')->group(function () {
     #TODO TRANSFER
     Route::post("/verify-bank-account", [MoneyTransferController::class, "verify_account"])->name("verify_account");
 
-
+    #TODO STORE BENEFICIARY
+    Route::post("store-beneficiaries", [BeneficiaryController::class, "store"]);
+    #TODO List BENEFICIARY
+    Route::get("list-beneficiaries", [BeneficiaryController::class, "index"]);
+    #TODO SHOW BENEFICIARY
+    Route::get("show-beneficiaries/{id}", [BeneficiaryController::class, "show"]);
+    #TODO UPDATE BENEFICIARY
+    Route::put("update-beneficiaries/{id}", [BeneficiaryController::class, "update"]);
+    #TODO DELETE BENEFICIARY
+    Route::delete("delete-beneficiaries/{id}", [BeneficiaryController::class, "destroy"]);
 });
