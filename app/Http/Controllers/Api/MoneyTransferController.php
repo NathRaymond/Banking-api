@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\TransactionPin;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -49,6 +50,34 @@ class MoneyTransferController extends Controller
         }
     }
 
+    public function verify_account_internal(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "account_number" => "required|min:10|max:10",
+        ]);
+
+        if ($validator->fails()) {
+            return API_Response(500, [
+                "message" => $validator->messages()->first()
+            ], $validator->errors());
+        } else {
+            $user =  User::where("account_no", $request->account_number)->first();
+            if ($user) {
+                return  API_Response(200, [
+                    "message" => "Account number resolved",
+                    "data" => [
+                        "account_name" => $user->first_name . " " . $user->last_name,
+                        "account_number" => $user->account_no,
+                    ]
+                ]);
+            } else {
+                return API_Response(500, [
+                    "message" => "Invalid account number"
+                ]);
+            }
+        }
+    }
+
     public function createRecipient(Request $request)
     {
         $wallet = Wallet::where("user_id", auth()->user()->id)->first();
@@ -63,7 +92,7 @@ class MoneyTransferController extends Controller
                 "message" => $validator->messages()->first()
             ], $validator->errors());
         } else {
-            if ($request->amount > ($wallet->balance + get_settings("transfer_charges"))) {
+            if (($request->amount +  get_settings("external_transfer_charges")) > $wallet->balance) {
                 $status = "Insufficient balance";
             } else {
                 $status = "success";
@@ -90,8 +119,8 @@ class MoneyTransferController extends Controller
                 ...json_decode($response->getBody(), true),
                 "status" => $status,
                 "amount" => $request->amount,
-                "charges" => get_settings("transfer_charges") == 0 ? "free" : get_settings("transfer_charges"),
-                "total_amount" => ($request->amount + get_settings("transfer_charges")),
+                "charges" => get_settings("external_transfer_charges") == 0 ? "free" : get_settings("external_transfer_charges"),
+                "total_amount" => ($request->amount + get_settings("external_transfer_charges")),
             ]);
         }
     }
@@ -144,6 +173,64 @@ class MoneyTransferController extends Controller
         }
     }
 
+    public function initiateTransferInternal(Request $request)
+    {
+        $wallet = Wallet::where("user_id", auth()->user()->id)->first();
+        $validator = Validator::make($request->all(), [
+            "account_no" => "required",
+            "amount" => "required|numeric",
+            "reason" => "required|max:100",
+        ]);
+        if ($validator->fails()) {
+            return API_Response(500, [
+                "message" => $validator->messages()->first()
+            ], $validator->errors());
+        } else {
+            if (($request->amount +  get_settings("internal_transfer_charges")) > $wallet->balance) {
+                return API_Response(500, [
+                    "message" => "Insufficient balance",
+                ]);
+            } else {
+                $amount = $request->amount + get_settings("internal_transfer_charges");
+                $recipient = User::where("account_no", $request->account_no)->first();
+                if ($recipient->id != $request->user()->id) {
+                    return API_Response(500, [
+                        "message" => "You cannot make transfer to yourself",
+                    ]);
+                } else {
+                    ///Wallet Account
+                    $recipient_wallet = Wallet::where("user_id", $recipient->id)->first();
+                    $recipient_wallet->balance += $request->amount;
+                    $recipient_wallet->save();
+                    $user_wallet = Wallet::where("user_id", $request->user()->id)->first();
+                    $user_wallet->balance -= $amount;
+                    $user_wallet->save();
+                    //TRANSACTION RECEIPT 
+                    $transaction = new Transaction();
+                    $transaction->transaction_id = generateNumericTransactionId();
+                    $transaction->reference_id = generateReferenceId();
+                    $transaction->user_id = $request->user()->id;
+                    $transaction->amount = $amount;
+                    $transaction->charges = get_settings("internal_transfer_charges");
+                    $transaction->currency = "NGN";
+                    $transaction->reason = $request->reason;
+                    $transaction->type = "internal_transfer";
+                    $transaction->status = "success";
+                    $transaction->details = json_encode([
+                        "account_number" => $recipient->account_no,
+                        "account_name" => $recipient->first_name . " " . $recipient->last_name,
+                        "bank_name" => get_settings("app_name"),
+                    ]);
+                    $transaction->save();
+                    return API_Response(200, [
+                        "message" => "Transfer has been queued",
+                        "transaction_code" => $transaction->transaction_id
+                    ]);
+                }
+            }
+        }
+    }
+
     public function verifyTransfer(Request $request, $transfer_code)
     {
 
@@ -165,6 +252,20 @@ class MoneyTransferController extends Controller
         } catch (Exception $err) {
             return API_Response(500, [
                 "message" => $err->getMessage(),
+            ]);
+        }
+    }
+
+    public function verifyTransferInternal(Request $request, $transfer_code)
+    {
+        $transaction = Transaction::where("transaction_id", $transfer_code)->first();
+        if ($transaction) {
+            return API_Response(200, [
+                "message" => $transaction,
+            ]);
+        } else {
+            return API_Response(500, [
+                "message" => "Invalid transaction code"
             ]);
         }
     }

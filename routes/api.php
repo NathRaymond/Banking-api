@@ -72,14 +72,18 @@ Route::middleware('auth:api')->group(function () {
     Route::post("store-transaction-pin", [TransactionPinController::class, "store"]);
     #TODO UPDATE TRANSACTION PIN
     Route::post("update-transaction-pin", [TransactionPinController::class, "update"]);
-    #TODO TRANSFER
+
+    #TODO VERIFY ACCOUNT NUMBER 
     Route::post("/verify-bank-account", [MoneyTransferController::class, "verify_account"])->name("verify_account");
+    Route::post("/verify-account-number-internal", [MoneyTransferController::class, "verify_account_internal"])->name("verify_account_internal");
     #TODO TRANSFER
     Route::post("/create-recipient", [MoneyTransferController::class, "createRecipient"])->name("create_recipient");
     #TODO INITIATE TRANSFER
     Route::post("/initiate-transfer", [MoneyTransferController::class, "initiateTransfer"])->name("initiate_transfer");
+    Route::post("/initiate-transfer-internal", [MoneyTransferController::class, "initiateTransferInternal"])->name("initiate_transfer");
     #TODO VERIFY TRANSFER
     Route::get("/verify-transfer/{transfer_code}", [MoneyTransferController::class, "verifyTransfer"])->name("verify_transfer");
+    Route::get("/verify-transfer-internal/{transfer_code}", [MoneyTransferController::class, "verifyTransferInternal"])->name("verify_transfer_internal");
 
 
     #TODO STORE BENEFICIARY

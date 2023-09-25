@@ -15,9 +15,9 @@ function API_Response($statusCode, $response = false, $errorBag = false)
 function generateAccountNumber()
 {
     $bankCode = '753';
-    $branchCode = '4422';
+    $branchCode = '442';
 
-    $accountIdentifier = str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT);
+    $accountIdentifier = str_pad(rand(1, 9999), 3, '0', STR_PAD_LEFT);
 
     $accountNumber = $bankCode . $branchCode . $accountIdentifier;
 
@@ -30,7 +30,8 @@ function get_settings($setting_key)
     return @$setting_data->value;
 }
 
-function generateReferenceId($length = 8) {
+function generateReferenceId($length = 8)
+{
     $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $referenceId = '';
     $charLength = strlen($characters);
@@ -38,4 +39,16 @@ function generateReferenceId($length = 8) {
         $referenceId .= $characters[rand(0, $charLength - 1)];
     }
     return $referenceId;
+}
+
+function generateNumericTransactionId($length = 4) {
+    $timestamp = time();
+    $randomDigits = '0123456789'; 
+    $randomLength = strlen($randomDigits);
+    $transactionId = '';
+    $transactionId .= date('mdHis', $timestamp);
+    for ($i = 0; $i < $length - 14; $i++) {
+        $transactionId .= $randomDigits[rand(0, $randomLength - 1)];
+    }
+    return $transactionId;
 }
