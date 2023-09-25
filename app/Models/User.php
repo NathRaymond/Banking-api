@@ -71,5 +71,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $randomNumber; // Return the generated code
     }
 
+    public function transactionPin()
+{
+    return $this->hasOne(TransactionPin::class);
+}
 
 }

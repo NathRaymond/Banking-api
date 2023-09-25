@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TransactionPin extends Model
+class ElectricityRecharge extends Model
 {
     use HasFactory;
-    protected $table = 'transaction_pins';
+    protected $table = 'electricity_recharge';
     protected $guarded = [];
 }

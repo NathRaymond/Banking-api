@@ -22,7 +22,7 @@ class ForgotPasswordController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
+            return API_Response([
                 'message' => $validator->messages()->first(),
             ], 500);
         }
@@ -30,7 +30,7 @@ class ForgotPasswordController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json([
+            return API_Response([
                 'message' => 'Email not found'
             ], 500);
         }
@@ -40,12 +40,12 @@ class ForgotPasswordController extends Controller
         try {
             Mail::to($user->email)->send(new PasswordResetMail($user->password_reset_code));
         } catch (\Exception $e) {
-            return response()->json([
+            return API_Response([
                 'message' => 'Failed to send the email. Please try again later.'
             ], 500);
         }
 
-        return response()->json([
+        return API_Response([
             'message' => 'Reset code sent to your email'
         ], 200);
     }
@@ -60,7 +60,7 @@ class ForgotPasswordController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
+            return API_Response([
                 'message' => $validator->messages()->first(),
             ], 500);
         }
@@ -68,19 +68,19 @@ class ForgotPasswordController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json([
+            return API_Response([
                 'message' => 'Email not found',
             ], 500);
         }
 
         if ($user->password_reset_code != $request->reset_code) {
-            return response()->json([
+            return API_Response([
                 'message' => 'Invalid code',
             ], 500);
         }
 
         if ($user->password_reset_expires_at <= now()) {
-            return response()->json([
+            return API_Response([
                 'message' => 'Reset code has expired',
             ], 500);
         }
@@ -91,7 +91,7 @@ class ForgotPasswordController extends Controller
             'password_reset_expires_at' => null,
         ]);
 
-        return response()->json([
+        return API_Response([
             'message' => 'Password reset successfully',
         ], 200);
     }
@@ -103,7 +103,7 @@ class ForgotPasswordController extends Controller
     ]);
 
     if ($validator->fails()) {
-        return response()->json([
+        return API_Response([
             'status' => 500,
             'data' => [
                 'message' => $validator->messages()->first(),
@@ -114,8 +114,8 @@ class ForgotPasswordController extends Controller
     $user = User::where('email', $request->email)->first();
 
     if (!$user) {
-        return response()->json([
-            'status' => 404,
+        return API_Response([
+            'status' => 500,
             'data' => ['message' => 'Email not found'],
         ]);
     }
@@ -124,7 +124,7 @@ class ForgotPasswordController extends Controller
 
     Mail::to($user->email)->send(new PasswordResetMail($code));
 
-    return response()->json([
+    return API_Response([
         'status' => 200,
         'data' => ['message' => 'Reset code sent to your email'],
     ]);

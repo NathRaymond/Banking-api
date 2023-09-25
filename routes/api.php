@@ -3,10 +3,11 @@
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
-use App\Http\Controllers\Api\Auth\ResetPasswordController;
-use App\Http\Controllers\Api\Auth\TransactionPinController;
+use App\Http\Controllers\Api\TransactionPinController;
 use App\Http\Controllers\Api\Auth\MoneyTransferController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\AirtimeController;
+use App\Http\Controllers\Api\DataRechargeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use KingFlamez\Rave\Facades\Rave as Flutterwave;
@@ -43,22 +44,25 @@ Route::name("guest")->group(function () {
     Route::post("reset-password", [ForgotPasswordController::class, "submitResetCode"]);
     #TODO RESEND CODE
     Route::post("password/resend-code", [ForgotPasswordController::class, "resendResetCode"])->name('password.resend-code');
-
 });
 
 #TODO AUTHORIZE
 Route::middleware('auth:api')->group(function () {
     #TODO GET AUTH USER
     Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
+    #TODO CREATE TRANSACTION PIN
+    Route::post("store-transaction-pin", [TransactionPinController::class, "store"]);
+    #TODO UPDATE TRANSACTION PIN
+    Route::post("update-transaction-pin", [TransactionPinController::class, "update"]);
+    #TODO RECHARGE AIRTIME
+    Route::post("recharge-airtime", [AirtimeController::class, "recharge_airtime"]);
+    #TODO RECHARGE DATA
+    Route::post("recharge-data", [DataRechargeController::class, "recharge_data"]);
+    #TODO RECHARGE ELECTRICITY
+    Route::post("recharge-electricity", [ElectricityRechargeController::class, "recharge_electricity"]);
+
 });
 
 
-// Create Pin
-Route::post("create-transaction-pin", [TransactionPinController::class, "create"]);
-// Reset Transaction Pin
-Route::post("reset-transaction-pin", [TransactionPinController::class, "reset"]);
-
-// Fetch user information
-
 // Transfer Money
-Route::post("money-transfer", [MoneyTransferController::class, "transfer"]);
+// Route::post("money-transfer", [MoneyTransferController::class, "transfer"]);

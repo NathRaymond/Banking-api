@@ -1,77 +1,127 @@
 <?php
 
-namespace App\Http\Controllers\Api\Auth;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\TransactionPin;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-
 use Illuminate\Support\Facades\Validator;
 
 class TransactionPinController extends Controller
 {
-    public function reset(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'new_pin' => 'required|min:4',
-            'confirm_pin' => 'required|same:new_pin',
+public function store(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        "pin" => "required|min:4|max:4|confirmed", 
+        "pin_confirmation" => "required|min:4|max:4", 
+    ]);
+
+    if ($validator->fails()) {
+        return API_Response(500, [
+            "message" => $validator->errors()->first() 
         ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $user = Auth::user();
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        $transacPin = TransactionPin::where('user_id', $user->id)->first();
-
-        if (!$transacPin) {
-            return response()->json(['error' => 'Transaction PIN record not found'], 404);
-        }
-
-        $transacPin->transaction_pin = Hash::make($request->input('new_pin'));
-        $transacPin->save();
-
-        return response()->json(['message' => 'Transaction PIN reset successfully'], 200);
     }
 
+    $user = auth()->user();
 
-    public function create(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'transaction_pin' => 'required|min:4',
+    // Store the PIN in the transaction_pin table
+    $transactionPin = $user->transactionPin()->create([
+        'pin' => Hash::make($request->pin),
+    ]);
+
+    if ($transactionPin) {
+        return API_Response(200, [
+            'message' => "Transaction PIN created successfully",
         ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $user = auth('api')->user();
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        // Check if the user already has a transaction PIN
-        $existingTransactionPin = TransactionPin::where('user_id', $user->id)->first();
-
-        if ($existingTransactionPin) {
-            return response()->json(['error' => 'Transaction PIN already exists'], 400);
-        }
-
-        // Create a new transaction PIN record
-        $newTransactionPin = new TransactionPin();
-        $newTransactionPin->user_id = $user->id;
-        $newTransactionPin->transaction_pin = Hash::make($request->input('transaction_pin'));
-        $newTransactionPin->save();
-
-        return response()->json(['message' => 'Transaction PIN created successfully'], 201);
+    } else {
+        return API_Response(500, ['message' => 'Failed to create Transaction PIN']);
     }
+}
+
+public function update(Request $request)
+{
+    $user = auth()->user();
+    $oldPin = $user->transactionPin->pin;
+
+    $validator = Validator::make($request->all(), [
+        "current_pin" => "required|min:4",
+        "pin" => [
+            "required",
+            "min:4",
+            "max:4",
+            "confirmed", // Ensure "pin" matches "pin_confirmation"
+            function ($attribute, $value, $fail) use ($oldPin) {
+                if (Hash::check($value, $oldPin)) {
+                    $fail("New PIN cannot be the same as the old PIN.");
+                }
+            },
+        ],
+        "pin_confirmation" => "required|min:4|max:4",
+    ]);
+
+    if ($validator->fails()) {
+        return API_Response(400, [
+            "message" => $validator->errors()->first()
+        ]);
+    }
+
+        // Check if the user has a transaction PIN
+        $transactionPin = $user->transactionPin;
+
+        if (!$transactionPin) {
+            return API_Response(500, ['message' => 'Transaction PIN not found']);
+        }
+
+        // Verify if the current PIN matches
+        if (!Hash::check($request->current_pin, $transactionPin->pin)) {
+            return API_Response(500, ['message' => 'Current PIN is incorrect']);
+        }
+
+        // Update the PIN
+        $transactionPin->pin = Hash::make($request->pin);
+        $transactionPin->save();
+
+        return API_Response(200, [
+            'message' => "Transaction PIN updated successfully",
+        ]);
+    }
+
+    // $validator = Validator::make($request->all(), [
+    //     "current_pin" => "required|min:4",
+    //     "pin" => "required|min:4|max:4|confirmed", 
+    //     "pin_confirmation" => "required|min:4|max:4", 
+    // ]);
+
+    // if ($validator->fails()) {
+    //     return API_Response(500, [
+    //         "message" => $validator->errors()->first()
+    //     ]);
+    // }
+
+    // $validator = Validator::make($request->all(), [
+    //     "current_pin" => "required|min:4",
+    //     "pin" => [
+    //         "required",
+    //         "min:4",
+    //         "max:4",
+    //         "confirmed", // Ensure "pin" matches "pin_confirmation"
+    //         "not_same_as:" . auth()->user()->transactionPin->pin, // Check against the old PIN
+    //     ],
+    //     "pin_confirmation" => "required|min:4|max:4",
+    // ]);
+
+    // if ($validator->fails()) {
+    //     return API_Response(500, [
+    //         "message" => $validator->errors()->first()
+    //     ]);
+    // }
+
+    // $user = auth()->user();
+      
+
+
 
 }
