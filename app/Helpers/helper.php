@@ -23,3 +23,4 @@ function generateAccountNumber()
 
     return $accountNumber;
 }
+
