@@ -28,7 +28,7 @@ use App\Http\Controllers\Api\BeneficiaryController;
 */
 
 Route::get("/test", function () {
-    return Flutterwave::generateReference();
+    // return Flutterwave::generateReference();
 });
 
 
@@ -73,6 +73,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post("recharge-electricity", [ElectricityRechargeController::class, "recharge_electricity"]);
     #TODO TRANSFER
     Route::post("/verify-bank-account", [MoneyTransferController::class, "verify_account"])->name("verify_account");
+    #MAKE TRANSFER
+    Route::post("/initialize-transfer", [MoneyTransferController::class, "initiateTransfer"])->name("initiate_transfer");
 
     #TODO STORE BENEFICIARY
     Route::post("store-beneficiaries", [BeneficiaryController::class, "store"]);
