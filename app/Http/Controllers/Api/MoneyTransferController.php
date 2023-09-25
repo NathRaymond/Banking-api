@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Models\TransactionPin;
 use App\Http\Controllers\Controller;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -140,6 +141,31 @@ class MoneyTransferController extends Controller
                     "message" => "Incorrect transaction pin"
                 ]);
             }
+        }
+    }
+
+    public function verifyTransfer(Request $request, $transfer_code)
+    {
+
+        try {
+            $client = new Client();
+            $url = 'https://api.paystack.co/transfer/' . $transfer_code;
+            $response = $client->get($url, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . config('paystack.secretKey'),
+                ]
+            ]);
+
+            $response_data = json_decode($response->getBody(), true);
+            $transaction = new Transaction();
+
+            return API_Response(200, [
+                ...$response_data,
+            ]);
+        } catch (Exception $err) {
+            return API_Response(500, [
+                "message" => $err->getMessage(),
+            ]);
         }
     }
 }

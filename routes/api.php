@@ -76,6 +76,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post("/create-recipient", [MoneyTransferController::class, "createRecipient"])->name("create_recipient");
     #TODO INITIATE TRANSFER
     Route::post("/initiate-transfer", [MoneyTransferController::class, "initiateTransfer"])->name("initiate_transfer");
+    #TODO VERIFY TRANSFER
+    Route::get("/verify-transfer/{transfer_code}", [MoneyTransferController::class, "verifyTransfer"])->name("verify_transfer");
 
 
     #TODO STORE BENEFICIARY
