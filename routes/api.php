@@ -23,7 +23,7 @@ use App\Http\Controllers\Api\Auth\TransactionPinController;
 */
 
 Route::get("/test", function () {
-    return Flutterwave::generateReference();
+    // return Flutterwave::generateReference();
 });
 
 
@@ -56,6 +56,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
     #TODO TRANSFER
     Route::post("/verify-bank-account", [MoneyTransferController::class, "verify_account"])->name("verify_account");
+    #MAKE TRANSFER
+    Route::post("/initialize-transfer", [MoneyTransferController::class, "initiateTransfer"])->name("initiate_transfer");
 });
 
 
