@@ -24,3 +24,18 @@ function generateAccountNumber()
     return $accountNumber;
 }
 
+function get_settings($setting_key)
+{
+    $setting_data = \App\Models\Setting::where("site_key", $setting_key)->first();
+    return @$setting_data->value;
+}
+
+function generateReferenceId($length = 8) {
+    $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $referenceId = '';
+    $charLength = strlen($characters);
+    for ($i = 0; $i < $length; $i++) {
+        $referenceId .= $characters[rand(0, $charLength - 1)];
+    }
+    return $referenceId;
+}
