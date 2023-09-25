@@ -10,7 +10,12 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\MoneyTransferController;
 use App\Http\Controllers\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
-use App\Http\Controllers\Api\Auth\TransactionPinController;
+use App\Http\Controllers\Api\TransactionPinController;
+use App\Http\Controllers\Api\AirtimeController;
+use App\Http\Controllers\Api\DataRechargeController;
+use App\Http\Controllers\Api\ElectricityRechargeController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\BeneficiaryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -49,23 +54,36 @@ Route::name("guest")->group(function () {
 });
 
 
-
 #TODO AUTHORIZE
 Route::middleware('auth:api')->group(function () {
     #TODO GET AUTH USER
     Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
+    #TODO UPDATE USER PROFILE
+    Route::put("update-profile", [ProfileController::class, "update"]);
+
+    #TODO CREATE TRANSACTION PIN
+    Route::post("store-transaction-pin", [TransactionPinController::class, "store"]);
+    #TODO UPDATE TRANSACTION PIN
+    Route::post("update-transaction-pin", [TransactionPinController::class, "update"]);
+    #TODO RECHARGE AIRTIME
+    Route::post("recharge-airtime", [AirtimeController::class, "recharge_airtime"]);
+    #TODO RECHARGE DATA
+    Route::post("recharge-data", [DataRechargeController::class, "recharge_data"]);
+    #TODO RECHARGE ELECTRICITY
+    Route::post("recharge-electricity", [ElectricityRechargeController::class, "recharge_electricity"]);
     #TODO TRANSFER
     Route::post("/verify-bank-account", [MoneyTransferController::class, "verify_account"])->name("verify_account");
     #MAKE TRANSFER
     Route::post("/initialize-transfer", [MoneyTransferController::class, "initiateTransfer"])->name("initiate_transfer");
+
+    #TODO STORE BENEFICIARY
+    Route::post("store-beneficiaries", [BeneficiaryController::class, "store"]);
+    #TODO List BENEFICIARY
+    Route::get("list-beneficiaries", [BeneficiaryController::class, "index"]);
+    #TODO SHOW BENEFICIARY
+    Route::get("show-beneficiaries/{id}", [BeneficiaryController::class, "show"]);
+    #TODO UPDATE BENEFICIARY
+    Route::put("update-beneficiaries/{id}", [BeneficiaryController::class, "update"]);
+    #TODO DELETE BENEFICIARY
+    Route::delete("delete-beneficiaries/{id}", [BeneficiaryController::class, "destroy"]);
 });
-
-
-// Create Pin
-Route::post("create-transaction-pin", [TransactionPinController::class, "create"]);
-// Reset Transaction Pin
-Route::post("reset-transaction-pin", [TransactionPinController::class, "reset"]);
-
-// Fetch user information
-
-// Transfer Money
