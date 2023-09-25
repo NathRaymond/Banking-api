@@ -89,39 +89,4 @@ public function update(Request $request)
         ]);
     }
 
-    // $validator = Validator::make($request->all(), [
-    //     "current_pin" => "required|min:4",
-    //     "pin" => "required|min:4|max:4|confirmed", 
-    //     "pin_confirmation" => "required|min:4|max:4", 
-    // ]);
-
-    // if ($validator->fails()) {
-    //     return API_Response(500, [
-    //         "message" => $validator->errors()->first()
-    //     ]);
-    // }
-
-    // $validator = Validator::make($request->all(), [
-    //     "current_pin" => "required|min:4",
-    //     "pin" => [
-    //         "required",
-    //         "min:4",
-    //         "max:4",
-    //         "confirmed", // Ensure "pin" matches "pin_confirmation"
-    //         "not_same_as:" . auth()->user()->transactionPin->pin, // Check against the old PIN
-    //     ],
-    //     "pin_confirmation" => "required|min:4|max:4",
-    // ]);
-
-    // if ($validator->fails()) {
-    //     return API_Response(500, [
-    //         "message" => $validator->errors()->first()
-    //     ]);
-    // }
-
-    // $user = auth()->user();
-      
-
-
-
 }

@@ -10,11 +10,11 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\MoneyTransferController;
 use App\Http\Controllers\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
-use App\Http\Controllers\Api\Auth\TransactionPinController;
 use App\Http\Controllers\Api\TransactionPinController;
 use App\Http\Controllers\Api\AirtimeController;
 use App\Http\Controllers\Api\DataRechargeController;
 use App\Http\Controllers\Api\ElectricityRechargeController;
+use App\Http\Controllers\Api\ProfileController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -53,11 +53,12 @@ Route::name("guest")->group(function () {
 });
 
 
-
 #TODO AUTHORIZE
 Route::middleware('auth:api')->group(function () {
     #TODO GET AUTH USER
     Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
+    #TODO UPDATE USER PROFILE
+    Route::put("update-profile", [ProfileController::class, "update"]);
 
     #TODO CREATE TRANSACTION PIN
     Route::post("store-transaction-pin", [TransactionPinController::class, "store"]);
@@ -69,7 +70,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post("recharge-data", [DataRechargeController::class, "recharge_data"]);
     #TODO RECHARGE ELECTRICITY
     Route::post("recharge-electricity", [ElectricityRechargeController::class, "recharge_electricity"]);
-
     #TODO TRANSFER
     Route::post("/verify-bank-account", [MoneyTransferController::class, "verify_account"])->name("verify_account");
+
+
 });
