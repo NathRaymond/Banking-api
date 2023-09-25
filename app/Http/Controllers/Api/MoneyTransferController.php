@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use Exception;
+use App\Models\Wallet;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use App\Models\TransactionPin;
 use App\Http\Controllers\Controller;
-use App\Models\Wallet;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Unicodeveloper\Paystack\Facades\Paystack;
 // use KingFlamez\Rave\Facades\Rave as Flutterwave;
@@ -105,24 +108,38 @@ class MoneyTransferController extends Controller
                 "message" => $validator->messages()->first()
             ], $validator->errors());
         } else {
+            $transaction_pin = TransactionPin::where("user_id", $request->user()->id)->first();
 
-            $reference = generateReferenceId();
-            $client = new Client();
-            $url = 'https://api.paystack.co/transfer';
-            $response = $client->post($url, [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . config('paystack.secretKey'),
-                ],
-                'json' => [
-                    'source' => "balance",
-                    'amount' => $request->amount,
-                    'reference' => $reference,
-                    'recipient' => $request->recipient_code,
-                    'reason' => $request->reason,
-                ],
-            ]);
-
-            return json_decode($response->getBody(), true);
+            if (Hash::check($request->transfer_pin, $transaction_pin->pin)) {
+                $reference = generateReferenceId();
+                try {
+                    $client = new Client();
+                    $url = 'https://api.paystack.co/transfer';
+                    $response = $client->post($url, [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . config('paystack.secretKey'),
+                        ],
+                        'json' => [
+                            'source' => "balance",
+                            'amount' => $request->amount,
+                            'reference' => $reference,
+                            'recipient' => $request->recipient_code,
+                            'reason' => $request->reason,
+                        ],
+                    ]);
+                    return API_Response(200, [
+                        ...json_decode($response->getBody(), true)
+                    ]);
+                } catch (Exception $err) {
+                    return API_Response(500, [
+                        "message" => $err->getMessage(),
+                    ]);
+                }
+            } else {
+                return API_Response(500, [
+                    "message" => "Incorrect transaction pin"
+                ]);
+            }
         }
     }
 }
