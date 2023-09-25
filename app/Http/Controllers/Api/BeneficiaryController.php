@@ -30,6 +30,7 @@ class BeneficiaryController extends Controller
 
         return API_Response(200, ['message' => 'Beneficiary created successfully']);
     }
+
     // Get a list of beneficiaries for the authenticated user
     public function index(Request $request)
     {
@@ -55,6 +56,18 @@ class BeneficiaryController extends Controller
     // Update a beneficiary by ID
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            "name" => "required|string", 
+            "account_number" => "required|numeric|digits:10",
+            "bank_name" => "required|string", 
+        ]);
+    
+        if ($validator->fails()) {
+            return API_Response(500, [
+                "message" => $validator->errors()->first() 
+            ]);
+        }
+        
         $user = auth()->user();
         $beneficiary = Beneficiary::where('user_id', $user->id)->find($id);
 
