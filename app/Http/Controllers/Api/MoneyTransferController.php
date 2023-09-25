@@ -258,7 +258,7 @@ class MoneyTransferController extends Controller
 
     public function verifyTransferInternal(Request $request, $transfer_code)
     {
-        $transaction = Transaction::where("transaction_id", $transfer_code)->first();
+        $transaction = Transaction::where("transaction_id", $transfer_code)->where("user_id",$request->user()->id)->first();
         if ($transaction) {
             return API_Response(200, [
                 "message" => $transaction,
