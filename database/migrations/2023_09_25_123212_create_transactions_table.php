@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string("charges");
             $table->string("reason");
             $table->string("reference_id");
-            $table->string("transfer_code");
             $table->text("details");
-            $table->enum("status",["pending","success", "failed", "reversed"]);
+            $table->string("type");
+            $table->enum("status", ["pending", "success", "failed", "reversed"]);
             $table->timestamps();
         });
     }

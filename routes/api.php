@@ -62,6 +62,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get("fetch-auth-user-wallet", [UserController::class, "getAuthWallet"])->name("getAuthWallet");
     #TODO CHECK USER HAVE TRANSACTION PIN
     Route::get("check-user-have-transaction-pin", [UserController::class, "checkIfUserHaveTransactionPin"])->name("checkIfUserHaveTransactionPin");
+    #TODO GET TRANSACTION HISTORY
+    Route::get("fetch-transaction-history", [UserController::class, "fetchTransactionHistory"])->name("fetchTransactionHistory");
 
     #TODO UPDATE USER PROFILE
     Route::put("update-profile", [ProfileController::class, "update"]);

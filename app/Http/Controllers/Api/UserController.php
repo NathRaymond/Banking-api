@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Models\Transaction;
 use App\Models\TransactionPin;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
@@ -53,5 +54,13 @@ class UserController extends Controller
                 "status" => false
             ]);
         }
+    }
+
+
+    public function fetchTransactionHistory(Request $request){
+        $transaction = Transaction::where("user_id", $request->user()->id)->orderBy("id","DESC")->get();
+        return API_Response(200, [
+           "message"=>$transaction
+        ]);
     }
 }
