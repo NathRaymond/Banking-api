@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\DataRechargeController;
 use App\Http\Controllers\Api\ElectricityRechargeController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\BeneficiaryController;
+use App\Http\Controllers\Api\AccountUpgradeController;
+use App\Http\Controllers\Api\AccontMonitoringController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -59,18 +61,20 @@ Route::middleware('auth:api')->group(function () {
     #TODO GET AUTH USER
     Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
     #TODO UPDATE USER PROFILE
-    Route::put("update-profile", [ProfileController::class, "update"]);
+    Route::post("update-profile", [ProfileController::class, "update"]);
 
     #TODO CREATE TRANSACTION PIN
     Route::post("store-transaction-pin", [TransactionPinController::class, "store"]);
     #TODO UPDATE TRANSACTION PIN
     Route::post("update-transaction-pin", [TransactionPinController::class, "update"]);
+
     #TODO RECHARGE AIRTIME
     Route::post("recharge-airtime", [AirtimeController::class, "recharge_airtime"]);
     #TODO RECHARGE DATA
     Route::post("recharge-data", [DataRechargeController::class, "recharge_data"]);
     #TODO RECHARGE ELECTRICITY
     Route::post("recharge-electricity", [ElectricityRechargeController::class, "recharge_electricity"]);
+
     #TODO TRANSFER
     Route::post("/verify-bank-account", [MoneyTransferController::class, "verify_account"])->name("verify_account");
     #MAKE TRANSFER
@@ -83,7 +87,16 @@ Route::middleware('auth:api')->group(function () {
     #TODO SHOW BENEFICIARY
     Route::get("show-beneficiaries/{id}", [BeneficiaryController::class, "show"]);
     #TODO UPDATE BENEFICIARY
-    Route::put("update-beneficiaries/{id}", [BeneficiaryController::class, "update"]);
+    Route::post("update-beneficiaries/{id}", [BeneficiaryController::class, "update"]);
     #TODO DELETE BENEFICIARY
     Route::delete("delete-beneficiaries/{id}", [BeneficiaryController::class, "destroy"]);
+
+    #TODO ACCOUNT UPGRADE VERIFICATION DOCUMENT
+    Route::post("upload-document", [AccountUpgradeController::class, "update"]);
+
+    #TODO RESTRICT ACCOUNT
+    Route::post("restrict-account", [AccontMonitoringController::class, "restrict"]);
+    #TODO CLOSE ACCOUNT
+    Route::post("close-account", [AccontMonitoringController::class, "close"]);
+
 });
