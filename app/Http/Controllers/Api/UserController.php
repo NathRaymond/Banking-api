@@ -56,7 +56,6 @@ class UserController extends Controller
         }
     }
 
-
     public function fetchTransactionHistory(Request $request){
         $transaction = Transaction::where("user_id", $request->user()->id)->orderBy("id","DESC")->get();
         return API_Response(200, [

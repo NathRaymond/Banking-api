@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\BeneficiaryController;
 use App\Http\Controllers\Api\AccountUpgradeController;
 use App\Http\Controllers\Api\AccontMonitoringController;
+use App\Http\Controllers\Api\NotificationController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -106,6 +107,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post("restrict-account", [AccontMonitoringController::class, "restrict"]);
     #TODO CLOSE ACCOUNT
     Route::post("close-account", [AccontMonitoringController::class, "close"]);
+
+    #TODO GET NOTIFICATION
+    Route::get("notifications", [NotificationController::class, "fetchNotification"]);
 
 });
 
