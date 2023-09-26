@@ -60,6 +60,13 @@ Route::name("guest")->group(function () {
 Route::middleware('auth:api')->group(function () {
     #TODO GET AUTH USER
     Route::get("fetch-auth-user", [UserController::class, "fetchAuthUser"])->name("getAuthUser");
+    #TODO GET USER WALLER
+    Route::get("fetch-auth-user-wallet", [UserController::class, "getAuthWallet"])->name("getAuthWallet");
+    #TODO CHECK USER HAVE TRANSACTION PIN
+    Route::get("check-user-have-transaction-pin", [UserController::class, "checkIfUserHaveTransactionPin"])->name("checkIfUserHaveTransactionPin");
+    #TODO GET TRANSACTION HISTORY
+    Route::get("fetch-transaction-history", [UserController::class, "fetchTransactionHistory"])->name("fetchTransactionHistory");
+
     #TODO UPDATE USER PROFILE
     Route::post("update-profile", [ProfileController::class, "update"]);
 
@@ -68,17 +75,18 @@ Route::middleware('auth:api')->group(function () {
     #TODO UPDATE TRANSACTION PIN
     Route::post("update-transaction-pin", [TransactionPinController::class, "update"]);
 
-    #TODO RECHARGE AIRTIME
-    Route::post("recharge-airtime", [AirtimeController::class, "recharge_airtime"]);
-    #TODO RECHARGE DATA
-    Route::post("recharge-data", [DataRechargeController::class, "recharge_data"]);
-    #TODO RECHARGE ELECTRICITY
-    Route::post("recharge-electricity", [ElectricityRechargeController::class, "recharge_electricity"]);
-
-    #TODO TRANSFER
+    #TODO VERIFY ACCOUNT NUMBER
     Route::post("/verify-bank-account", [MoneyTransferController::class, "verify_account"])->name("verify_account");
-    #MAKE TRANSFER
-    Route::post("/initialize-transfer", [MoneyTransferController::class, "initiateTransfer"])->name("initiate_transfer");
+    Route::post("/verify-account-number-internal", [MoneyTransferController::class, "verify_account_internal"])->name("verify_account_internal");
+    #TODO TRANSFER
+    Route::post("/create-recipient", [MoneyTransferController::class, "createRecipient"])->name("create_recipient");
+    #TODO INITIATE TRANSFER
+    Route::post("/initiate-transfer", [MoneyTransferController::class, "initiateTransfer"])->name("initiate_transfer");
+    Route::post("/initiate-transfer-internal", [MoneyTransferController::class, "initiateTransferInternal"])->name("initiate_transfer");
+    #TODO VERIFY TRANSFER
+    Route::get("/verify-transfer/{transfer_code}", [MoneyTransferController::class, "verifyTransfer"])->name("verify_transfer");
+    Route::get("/verify-transfer-internal/{transfer_code}", [MoneyTransferController::class, "verifyTransferInternal"])->name("verify_transfer_internal");
+
 
     #TODO STORE BENEFICIARY
     Route::post("store-beneficiaries", [BeneficiaryController::class, "store"]);
@@ -100,3 +108,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post("close-account", [AccontMonitoringController::class, "close"]);
 
 });
+
+    // #TODO RECHARGE AIRTIME
+    // Route::post("recharge-airtime", [AirtimeController::class, "recharge_airtime"]);
+    // #TODO RECHARGE DATA
+    // Route::post("recharge-data", [DataRechargeController::class, "recharge_data"]);
+    // #TODO RECHARGE ELECTRICITY
+    // Route::post("recharge-electricity", [ElectricityRechargeController::class, "recharge_electricity"]);
